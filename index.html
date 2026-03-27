@@ -34,14 +34,31 @@
   #cursor-ring { width: 36px; height: 36px; border: 1.5px solid var(--terra); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transition: transform 0.35s ease, width 0.3s, height 0.3s, opacity 0.3s; transform: translate(-50%, -50%); opacity: 0.6; }
 
   /* NAV */
-  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 1.2rem 3rem; display: flex; justify-content: space-between; align-items: center; transition: background 0.4s, box-shadow 0.4s, padding 0.4s; }
-  nav.scrolled { background: rgba(14,31,14,0.96); backdrop-filter: blur(12px); box-shadow: 0 2px 30px rgba(0,0,0,0.3); padding: 0.8rem 3rem; }
-  .nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 600; color: var(--cream); letter-spacing: 0.12em; text-decoration: none; }
-  .nav-links { display: flex; gap: 2rem; list-style: none; }
-  .nav-links a { color: var(--cream); opacity: 0.75; text-decoration: none; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; transition: opacity 0.2s; font-weight: 400; }
-  .nav-links a:hover { opacity: 1; }
-  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
-  .hamburger span { width: 24px; height: 1.5px; background: var(--cream); display: block; transition: 0.3s; }
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 1.2rem 3rem; display: flex; justify-content: space-between; align-items: center; transition: background 0.4s, box-shadow 0.4s, padding 0.4s; }
+nav.scrolled { background: rgba(14,31,14,0.96); backdrop-filter: blur(12px); box-shadow: 0 2px 30px rgba(0,0,0,0.3); padding: 0.8rem 3rem; }
+.nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 600; color: var(--cream); letter-spacing: 0.12em; text-decoration: none; }
+.nav-links { display: flex; gap: 2rem; list-style: none; }
+.nav-links a {
+  color: rgba(244,239,230,0.75);
+  text-decoration: none;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 400;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  transition: color 0.2s, background 0.2s;
+}
+.nav-links a:hover {
+  color: var(--cream);
+  background: rgba(196,98,45,0.25);
+}
+.nav-links a.active {
+  color: var(--cream) !important;
+  background: var(--terra) !important;
+}
+.hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+.hamburger span { width: 24px; height: 1.5px; background: var(--cream); display: block; transition: 0.3s; }
 
   /* SECTIONS */
   section { position: relative; overflow: hidden; }
@@ -673,6 +690,10 @@
     <a href="#problem" class="btn-primary">Explore the Project</a>
     <a href="#prototype" class="btn-outline">See the Prototype</a>
   </div>
+  <div class="hero-scroll-hint">
+    <div class="scroll-line"></div>
+    <span class="scroll-label">Scroll</span>
+  </div>
 </section>
 
 <!-- NUMBERS BAR -->
@@ -1220,6 +1241,10 @@
       <p class="contact-name">Vansika Jhawar</p>
       <p class="contact-detail" style="margin-top:1rem;">vansika.jhawar18@gmail.com</p>
       <p class="contact-detail">+91 9674795110</p>
+    </div>
+    <div class="contact-divider reveal reveal-delay-4"></div>
+    <a href="mailto:vansika.jhawar18@gmail.com" class="btn-primary reveal reveal-delay-4">Send a Message →</a>
+  </div>
 </section>
 
 <!-- FOOTER -->
@@ -1257,6 +1282,34 @@
   // NAV SCROLL
   const navbar = document.getElementById('navbar');
   window.addEventListener('scroll', () => { navbar.classList.toggle('scrolled', window.scrollY > 60); });
+
+  // ACTIVE NAV HIGHLIGHT
+  const navLinks = document.querySelectorAll('.nav-links a');
+  const sectionIds = ['problem', 'solution', 'hydroponics', 'comparison', 'income', 'prototype', 'market', 'limitations', 'applications', 'companion', 'future', 'commercialize', 'iet-thanks', 'contact'];
+
+  function updateActiveNav() {
+    let current = '';
+  
+    sectionIds.forEach(id => {
+      const section = document.getElementById(id);
+      if (!section) return;
+      const sectionTop = section.getBoundingClientRect().top;
+      if (sectionTop <= window.innerHeight * 0.4) {
+        current = id;
+      }
+    });
+
+    navLinks.forEach(link => {
+      link.classList.remove('active');
+      if (link.getAttribute('href') === '#' + current) {
+        link.classList.add('active');
+      }
+    });
+  }
+
+  window.addEventListener('scroll', updateActiveNav);
+  updateActiveNav();
+
 
   // HERO TAGLINE CYCLE
   const taglines = document.querySelectorAll('.tagline-item');
