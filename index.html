@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ANNAPURNA — Vertical Hydroponic Farming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --green-deep: #0e1f0e;
+    --green-mid: #1c3a1c;
+    --green-light: #2d5a2d;
+    --green-pale: #3d7a3d;
+    --cream: #f4efe6;
+    --cream-dark: #e8e0d0;
+    --terra: #c4622d;
+    --terra-light: #d97c4a;
+    --gold: #b8a96a;
+    --white: #fdfaf5;
+    --text-dark: #0e1f0e;
+    --text-mid: #2d4a2d;
+    --text-muted: #5a7a5a;
+    --ink: #0e1f0e;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; font-size: 16px; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text-dark); overflow-x: hidden; cursor: none; }
+
+  /* CUSTOM CURSOR */
+  #cursor { width: 12px; height: 12px; background: var(--terra); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transition: transform 0.15s ease, background 0.2s; transform: translate(-50%, -50%); }
+  #cursor-ring { width: 36px; height: 36px; border: 1.5px solid var(--terra); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transition: transform 0.35s ease, width 0.3s, height 0.3s, opacity 0.3s; transform: translate(-50%, -50%); opacity: 0.6; }
+
+  /* NAV */
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 1.2rem 3rem; display: flex; justify-content: space-between; align-items: center; transition: background 0.4s, box-shadow 0.4s, padding 0.4s; }
+  nav.scrolled { background: rgba(14,31,14,0.96); backdrop-filter: blur(12px); box-shadow: 0 2px 30px rgba(0,0,0,0.3); padding: 0.8rem 3rem; }
+  .nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 600; color: var(--cream); letter-spacing: 0.12em; text-decoration: none; }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { color: var(--cream); opacity: 0.75; text-decoration: none; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; transition: opacity 0.2s; font-weight: 400; }
+  .nav-links a:hover { opacity: 1; }
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+  .hamburger span { width: 24px; height: 1.5px; background: var(--cream); display: block; transition: 0.3s; }
+
+  /* SECTIONS */
+  section { position: relative; overflow: hidden; }
+  .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.8s ease, transform 0.8s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+  .reveal-delay-5 { transition-delay: 0.5s; }
+
+  /* HERO */
+  #hero { min-height: 100vh; background: var(--green-deep); display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center; padding: 8rem 2rem 4rem; position: relative; }
+  .hero-bg { position: absolute; inset: 0; background: radial-gradient(ellipse at 20% 50%, rgba(45,90,45,0.5) 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(196,98,45,0.15) 0%, transparent 50%), radial-gradient(ellipse at 60% 80%, rgba(45,90,45,0.3) 0%, transparent 50%); animation: bgPulse 8s ease-in-out infinite alternate; }
+  @keyframes bgPulse { 0% { opacity: 0.7; } 100% { opacity: 1; } }
+  .hero-grain { position: absolute; inset: 0; opacity: 0.04; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); background-repeat: repeat; pointer-events: none; }
+  .hero-eyebrow { font-size: 0.72rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--terra); font-weight: 500; margin-bottom: 1.5rem; position: relative; animation: fadeUp 1s ease 0.2s both; }
+  .hero-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(3.5rem, 9vw, 8rem); font-weight: 300; color: var(--cream); line-height: 1.0; letter-spacing: -0.02em; position: relative; animation: fadeUp 1s ease 0.4s both; max-width: 900px; }
+  .hero-title em { font-style: italic; color: var(--gold); }
+  .hero-sub { font-size: clamp(1rem, 2vw, 1.2rem); color: rgba(244,239,230,0.65); max-width: 520px; line-height: 1.7; margin-top: 1.8rem; font-weight: 300; position: relative; animation: fadeUp 1s ease 0.6s both; }
+  .hero-tagline { margin-top: 2.5rem; height: 2rem; position: relative; animation: fadeUp 1s ease 0.8s both; overflow: hidden; }
+  .tagline-item { position: absolute; left: 50%; transform: translateX(-50%); font-size: 1.1rem; font-weight: 500; color: var(--terra-light); letter-spacing: 0.05em; white-space: nowrap; transition: opacity 0.6s, transform 0.6s; opacity: 0; transform: translateX(-50%) translateY(20px); }
+  .tagline-item.active { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .tagline-item.exit { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+  .hero-cta { margin-top: 3rem; display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; position: relative; animation: fadeUp 1s ease 1s both; }
+  .btn-primary { background: var(--terra); color: var(--cream); border: none; padding: 0.9rem 2.2rem; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; text-decoration: none; transition: background 0.3s, transform 0.2s, box-shadow 0.3s; display: inline-block; }
+  .btn-primary:hover { background: var(--terra-light); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(196,98,45,0.4); }
+  .btn-outline { background: transparent; color: var(--cream); border: 1px solid rgba(244,239,230,0.3); padding: 0.9rem 2.2rem; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; text-decoration: none; transition: border-color 0.3s, transform 0.2s; display: inline-block; }
+  .btn-outline:hover { border-color: var(--cream); transform: translateY(-2px); }
+  .hero-scroll-hint { position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 0.5rem; animation: fadeUp 1s ease 1.4s both; }
+  .scroll-line { width: 1px; height: 60px; background: linear-gradient(to bottom, var(--terra), transparent); animation: scrollPulse 2s ease-in-out infinite; }
+  @keyframes scrollPulse { 0%,100%{opacity:0.4;transform:scaleY(0.8)} 50%{opacity:1;transform:scaleY(1)} }
+  .scroll-label { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(244,239,230,0.4); }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(25px); } to { opacity:1; transform:translateY(0); } }
+
+  /* SECTION HEADER */
+  .section-label { font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--terra); font-weight: 500; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.8rem; }
+  .section-label::after { content:''; flex:1; height:1px; background:var(--terra); opacity:0.3; max-width:60px; }
+  .section-title { font-family: 'Cormorant Garamond', serif; font-weight: 300; line-height: 1.1; letter-spacing: -0.01em; }
+
+  /* PROBLEM */
+  #problem { background: var(--green-deep); padding: 8rem 3rem; color: var(--cream); }
+  .problem-inner { max-width: 1200px; margin: 0 auto; }
+  .problem-header { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: end; margin-bottom: 5rem; }
+  .problem-title { font-size: clamp(2.5rem, 5vw, 4.5rem); }
+  .problem-quote { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-style: italic; font-weight: 300; color: var(--gold); line-height: 1.5; border-left: 2px solid var(--terra); padding-left: 1.5rem; }
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin-bottom: 4rem; }
+  .stat-card { background: rgba(255,255,255,0.04); padding: 2.5rem 2rem; border-top: 1px solid rgba(255,255,255,0.08); transition: background 0.3s; }
+  .stat-card:hover { background: rgba(255,255,255,0.08); }
+  .stat-num { font-family: 'Cormorant Garamond', serif; font-size: 3.5rem; font-weight: 600; color: var(--terra); line-height: 1; margin-bottom: 0.5rem; }
+  .stat-label { font-size: 0.85rem; color: rgba(244,239,230,0.6); line-height: 1.5; font-weight: 300; }
+  .problem-points { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; }
+  .problem-point { padding: 2rem 0; border-top: 1px solid rgba(255,255,255,0.1); }
+  .problem-point-num { font-family: 'Cormorant Garamond', serif; font-size: 3rem; font-weight: 300; color: rgba(244,239,230,0.15); line-height:1; margin-bottom: 1rem; }
+  .problem-point h3 { font-size: 1rem; font-weight: 500; margin-bottom: 0.7rem; color: var(--cream); }
+  .problem-point p { font-size: 0.88rem; color: rgba(244,239,230,0.55); line-height: 1.7; font-weight: 300; }
+
+  /* SOLUTION */
+  #solution { background: var(--cream); padding: 8rem 3rem; }
+  .solution-inner { max-width: 1200px; margin: 0 auto; }
+  .solution-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; }
+  .solution-title { font-size: clamp(2.5rem, 5vw, 4rem); color: var(--green-deep); margin-bottom: 2rem; }
+  .solution-text { font-size: 1rem; color: var(--text-muted); line-height: 1.8; font-weight: 300; margin-bottom: 1.5rem; }
+  .solution-features { display: flex; flex-direction: column; gap: 1.2rem; margin-top: 2rem; }
+  .feature-row { display: flex; align-items: flex-start; gap: 1.2rem; padding: 1.2rem; background: rgba(45,90,45,0.05); border-left: 2px solid var(--green-light); transition: background 0.3s, border-color 0.3s; }
+  .feature-row:hover { background: rgba(45,90,45,0.1); border-color: var(--terra); }
+  .feature-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 0.1rem; }
+  .feature-text h4 { font-size: 0.9rem; font-weight: 500; color: var(--green-deep); margin-bottom: 0.3rem; }
+  .feature-text p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.6; }
+  .solution-visual { position: relative; }
+  .solution-badge { position: absolute; bottom: -1.5rem; left: -1.5rem; background: var(--green-deep); color: var(--cream); padding: 1.5rem; width: 160px; }
+  .badge-num { font-family: 'Cormorant Garamond', serif; font-size: 2.5rem; font-weight: 300; color: var(--terra); }
+  .badge-label { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.7; }
+
+  /* =====================
+     ENHANCED IMAGE SYSTEM
+     ===================== */
+
+  /* Solution main image */
+  .solution-img-frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4/5;
+    overflow: hidden;
+    background: rgba(45,90,45,0.1);
+  }
+  .solution-img-frame img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s ease;
+  }
+  .solution-img-frame:hover img { transform: scale(1.04); }
+  .solution-img-caption {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 1.8rem 1.4rem 1.2rem;
+    background: linear-gradient(to top, rgba(14,31,14,0.88) 0%, transparent 100%);
+    color: var(--cream);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+  .solution-img-caption .cap-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--terra-light);
+    margin-bottom: 0.3rem;
+  }
+  .solution-img-caption .cap-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: var(--cream);
+  }
+  .solution-img-caption .cap-tag {
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: rgba(196,98,45,0.25);
+    border: 1px solid rgba(196,98,45,0.4);
+    color: var(--terra-light);
+    padding: 0.3rem 0.7rem;
+    white-space: nowrap;
+  }
+
+  /* PROTOTYPE GALLERY */
+  .proto-gallery-new {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 3px;
+    margin-bottom: 0.5rem;
+  }
+  .proto-img-cell {
+    position: relative;
+    overflow: hidden;
+    background: var(--green-mid);
+    cursor: pointer;
+  }
+  .proto-img-cell:nth-child(1) {
+    grid-row: 1 / 3;
+  }
+  .proto-img-cell img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.55s cubic-bezier(0.25,0.46,0.45,0.94), filter 0.4s;
+    filter: brightness(0.92);
+  }
+  .proto-img-cell:hover img {
+    transform: scale(1.07);
+    filter: brightness(1.0);
+  }
+
+  /* Image label overlay */
+  .img-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 40%, rgba(14,31,14,0.85) 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 1.2rem 1rem;
+    opacity: 1;
+    transition: opacity 0.35s;
+  }
+  .img-overlay-top {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(14,31,14,0.5) 0%, transparent 50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 1rem 1rem;
+    opacity: 0;
+    transition: opacity 0.35s;
+  }
+  .proto-img-cell:hover .img-overlay-top { opacity: 1; }
+
+  .img-label-tag {
+    display: inline-block;
+    font-size: 0.6rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--terra-light);
+    background: rgba(196,98,45,0.18);
+    border: 1px solid rgba(196,98,45,0.35);
+    padding: 0.22rem 0.6rem;
+    margin-bottom: 0.4rem;
+    width: fit-content;
+    font-weight: 500;
+  }
+  .img-label-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    font-weight: 400;
+    color: var(--cream);
+    line-height: 1.25;
+  }
+  .img-label-sub {
+    font-size: 0.68rem;
+    color: rgba(244,239,230,0.55);
+    margin-top: 0.2rem;
+    font-weight: 300;
+    line-height: 1.4;
+  }
+  .img-label-day {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.9rem;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+  }
+
+  /* Tall cell bigger label */
+  .proto-img-cell:nth-child(1) .img-label-title { font-size: 1.3rem; }
+  .proto-img-cell:nth-child(1) .img-overlay { padding: 1.8rem 1.4rem; }
+
+  /* No-img fallback */
+  .proto-img-cell.no-img {
+    background: rgba(45,90,45,0.12);
+    border: 1.5px dashed rgba(184,169,106,0.25);
+    min-height: 180px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .proto-img-cell.no-img img { display: none; }
+  .proto-img-cell.no-img .img-overlay { opacity: 0.5; background: none; }
+
+  /* Build steps strip */
+  .build-strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+    margin-top: 3px;
+  }
+  .build-img-cell {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 4/3;
+    background: var(--green-deep);
+  }
+  .build-img-cell img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s ease, filter 0.4s; filter: brightness(0.88) saturate(0.9); }
+  .build-img-cell:hover img { transform: scale(1.06); filter: brightness(1.0) saturate(1.1); }
+  .build-img-cell .img-overlay { background: linear-gradient(180deg, transparent 30%, rgba(14,31,14,0.9) 100%); }
+
+  /* Step number badge */
+  .step-badge {
+    position: absolute;
+    top: 0.75rem; right: 0.75rem;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--terra);
+    color: var(--cream);
+    font-size: 0.65rem;
+    font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    letter-spacing: 0;
+    z-index: 2;
+    box-shadow: 0 2px 10px rgba(196,98,45,0.5);
+  }
+
+  /* AWARD GALLERY */
+  .prize-gallery-new {
+    max-width: 1100px;
+    margin: 3.5rem auto 0;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 4px;
+  }
+  .prize-img-cell {
+    position: relative;
+    overflow: hidden;
+    background: rgba(14,31,14,0.6);
+    border: 1px solid rgba(184,169,106,0.1);
+  }
+  .prize-img-cell:nth-child(1) {
+    grid-row: 1 / 3;
+  }
+  .prize-img-cell img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.55s ease, filter 0.4s;
+    filter: brightness(0.85) saturate(0.85);
+  }
+  .prize-img-cell:hover img { transform: scale(1.05); filter: brightness(1.0) saturate(1.0); }
+
+  .prize-img-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 35%, rgba(14,31,14,0.92) 100%);
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 1.2rem 1rem;
+    transition: opacity 0.3s;
+  }
+  .prize-img-cell:nth-child(1) .prize-img-overlay { padding: 1.8rem 1.5rem; }
+  .prize-label-tag {
+    font-size: 0.58rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    background: rgba(184,169,106,0.12);
+    border: 1px solid rgba(184,169,106,0.3);
+    padding: 0.2rem 0.6rem;
+    width: fit-content;
+    margin-bottom: 0.35rem;
+    font-weight: 500;
+  }
+  .prize-label-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem;
+    font-weight: 400;
+    color: var(--cream);
+    line-height: 1.25;
+  }
+  .prize-label-sub {
+    font-size: 0.65rem;
+    color: rgba(244,239,230,0.5);
+    margin-top: 0.15rem;
+    font-weight: 300;
+  }
+  .prize-img-cell:nth-child(1) .prize-label-title { font-size: 1.15rem; }
+
+  /* Gallery section divider */
+  .gallery-section-head {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.2rem;
+    margin-top: 3.5rem;
+  }
+  .gallery-section-head:first-child { margin-top: 0; }
+  .gallery-section-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--terra);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .gallery-section-line {
+    flex: 1;
+    height: 1px;
+    background: var(--cream-dark);
+  }
+  .gallery-count {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    font-weight: 300;
+    white-space: nowrap;
+  }
+
+  /* HYDROPONICS */
+  #hydroponics { background: var(--white); padding: 8rem 3rem; }
+  .hydro-inner { max-width: 1200px; margin: 0 auto; }
+  .hydro-header { text-align: center; margin-bottom: 5rem; }
+  .hydro-title { font-size: clamp(2.5rem, 5vw, 4rem); color: var(--green-deep); margin-bottom: 1.5rem; }
+  .hydro-subtitle { font-size: 1.1rem; color: var(--text-muted); font-weight: 300; max-width: 560px; margin: 0 auto; line-height: 1.7; }
+  .hydro-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-bottom: 5rem; }
+  .hydro-card { background: var(--cream); padding: 2.5rem 2rem; position: relative; overflow: hidden; transition: transform 0.3s; }
+  .hydro-card::before { content:''; position:absolute; bottom:0; left:0; right:0; height:3px; background: var(--terra); transform: scaleX(0); transition: transform 0.3s; transform-origin:left; }
+  .hydro-card:hover::before { transform: scaleX(1); }
+  .hydro-card:hover { transform: translateY(-4px); }
+  .hydro-card-icon { font-size: 2rem; margin-bottom: 1rem; }
+  .hydro-card h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 600; color: var(--green-deep); margin-bottom: 0.8rem; }
+  .hydro-card p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.7; font-weight: 300; }
+  .hydro-process { display: grid; grid-template-columns: repeat(4,1fr); gap: 0; }
+  .process-step { padding: 2.5rem 2rem; border-right: 1px solid var(--cream-dark); position: relative; }
+  .process-step:last-child { border-right: none; }
+  .process-num { font-family: 'Cormorant Garamond', serif; font-size: 4rem; font-weight: 300; color: rgba(45,90,45,0.12); line-height:1; margin-bottom: 1rem; }
+  .process-step h4 { font-size: 0.9rem; font-weight: 500; color: var(--green-deep); margin-bottom: 0.5rem; }
+  .process-step p { font-size: 0.8rem; color: var(--text-muted); line-height: 1.6; font-weight: 300; }
+
+  /* COMPARISON */
+  #comparison { background: var(--green-deep); padding: 8rem 3rem; color: var(--cream); }
+  .comparison-inner { max-width: 1100px; margin: 0 auto; }
+  .comparison-title { font-size: clamp(2.5rem, 5vw, 4rem); margin-bottom: 1rem; text-align: center; }
+  .comparison-sub { text-align:center; color: rgba(244,239,230,0.55); font-weight:300; margin-bottom:4rem; }
+  .compare-table { width: 100%; border-collapse: collapse; }
+  .compare-table thead tr { border-bottom: 1px solid rgba(255,255,255,0.12); }
+  .compare-table th { padding: 1rem 1.5rem; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+  .compare-table th:first-child { text-align: left; color: rgba(244,239,230,0.4); }
+  .compare-table th.hydro-col { color: var(--terra); }
+  .compare-table th.soil-col { color: rgba(244,239,230,0.5); }
+  .compare-table td { padding: 1.2rem 1.5rem; font-size: 0.9rem; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .compare-table td:first-child { text-align: left; color: rgba(244,239,230,0.7); font-weight: 300; }
+  .compare-table .good { color: #7fd47f; font-weight: 500; }
+  .compare-table .bad { color: rgba(244,239,230,0.3); }
+  .compare-table tbody tr:hover { background: rgba(255,255,255,0.03); }
+
+  /* INCOME */
+  #income { background: var(--cream); padding: 8rem 3rem; }
+  .income-inner { max-width: 1200px; margin: 0 auto; }
+  .income-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 6rem; align-items: center; }
+  .income-title { font-size: clamp(2.5rem, 5vw, 4rem); color: var(--green-deep); margin-bottom: 2rem; }
+  .income-breakdown { display: flex; flex-direction: column; gap: 0; }
+  .income-row { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 0; border-bottom: 1px solid var(--cream-dark); font-size: 0.9rem; }
+  .income-row-label { color: var(--text-muted); font-weight: 300; }
+  .income-row-value { font-weight: 500; color: var(--green-deep); }
+  .income-row-value.highlight { color: var(--terra); font-size: 1.1rem; font-family: 'Cormorant Garamond', serif; font-weight: 600; }
+  .income-visual { display: flex; flex-direction: column; gap: 2rem; }
+  .income-bar-label { display:flex; justify-content:space-between; margin-bottom:0.5rem; font-size:0.82rem; color: var(--text-muted); }
+  .income-bar-track { background: var(--cream-dark); height: 6px; border-radius:3px; overflow:hidden; }
+  .income-bar-fill { height:100%; border-radius:3px; background: var(--green-light); transition: width 1.5s ease; width:0; }
+  .income-bar-fill.terra { background: var(--terra); }
+  .income-profit-box { background: var(--green-deep); color: var(--cream); padding: 2.5rem; text-align: center; margin-top: 1rem; }
+  .profit-num { font-family: 'Cormorant Garamond', serif; font-size: 3rem; color: var(--terra); font-weight: 600; }
+  .profit-label { font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.6; margin-top: 0.3rem; }
+
+  /* PROTOTYPE */
+  #prototype { background: var(--white); padding: 8rem 3rem; }
+  .proto-inner { max-width: 1200px; margin: 0 auto; }
+  .proto-header { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: end; margin-bottom: 4rem; }
+  .proto-title { font-size: clamp(2.5rem, 5vw, 4rem); color: var(--green-deep); }
+  .proto-desc { font-size: 0.95rem; color: var(--text-muted); line-height: 1.8; font-weight: 300; }
+  .proto-crops { display: grid; grid-template-columns: repeat(3,1fr); gap: 2rem; margin-top: 4rem; }
+  .crop-card { padding: 2rem; background: var(--cream); border-top: 2px solid var(--green-light); }
+  .crop-level { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--terra); margin-bottom: 0.5rem; }
+  .crop-card h4 { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 600; color: var(--green-deep); margin-bottom: 0.5rem; }
+  .crop-card p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.6; font-weight: 300; }
+
+  /* MARKET */
+  #market { background: var(--green-mid); padding: 8rem 3rem; color: var(--cream); }
+  .market-inner { max-width: 1200px; margin: 0 auto; }
+  .market-title { font-size: clamp(2.5rem, 5vw, 4rem); margin-bottom: 1rem; }
+  .market-sub { color: rgba(244,239,230,0.55); font-weight: 300; margin-bottom: 4rem; max-width: 560px; }
+  .market-tabs { display: flex; gap: 0; margin-bottom: 3rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+  .market-tab { padding: 0.8rem 2rem; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; color: rgba(244,239,230,0.5); border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color 0.2s, border-color 0.2s; }
+  .market-tab.active { color: var(--terra); border-color: var(--terra); }
+  .market-panel { display: none; }
+  .market-panel.active { display: grid; grid-template-columns: repeat(3,1fr); gap: 2rem; }
+  .market-crop { background: rgba(255,255,255,0.05); padding: 2rem; transition: background 0.3s; border: 1px solid rgba(255,255,255,0.06); }
+  .market-crop:hover { background: rgba(255,255,255,0.09); }
+  .market-crop h4 { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 600; margin-bottom: 0.5rem; }
+  .market-crop .price { color: var(--terra-light); font-size: 0.9rem; margin-bottom: 0.5rem; font-weight: 500; }
+  .market-crop p { font-size: 0.8rem; color: rgba(244,239,230,0.5); line-height:1.6; font-weight: 300; }
+
+  /* LIMITATIONS */
+  #limitations { background: var(--cream); padding: 8rem 3rem; }
+  .lim-inner { max-width: 1100px; margin: 0 auto; }
+  .lim-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 6rem; }
+  .lim-title { font-size: clamp(2.5rem, 5vw, 4rem); color: var(--green-deep); }
+  .lim-desc { font-size: 0.95rem; color: var(--text-muted); font-weight: 300; line-height: 1.7; margin-top: 1.5rem; }
+  .lim-list { display: flex; flex-direction: column; gap: 0; }
+  .lim-item { display: grid; grid-template-columns: 3rem 1fr; padding: 1.8rem 0; border-bottom: 1px solid var(--cream-dark); gap: 1.5rem; align-items: start; }
+  .lim-num { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 300; color: var(--terra); opacity: 0.7; }
+  .lim-item h4 { font-size: 0.95rem; font-weight: 500; color: var(--green-deep); margin-bottom: 0.4rem; }
+  .lim-item p { font-size: 0.83rem; color: var(--text-muted); line-height: 1.6; font-weight: 300; }
+
+  /* APPLICATIONS */
+  #applications { background: var(--green-deep); padding: 8rem 3rem; color: var(--cream); }
+  .app-inner { max-width: 1200px; margin: 0 auto; }
+  .app-title { font-size: clamp(2.5rem, 5vw, 4rem); margin-bottom: 1rem; }
+  .app-sub { color: rgba(244,239,230,0.55); margin-bottom: 4rem; font-weight: 300; max-width: 500px; }
+  .app-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; }
+  .app-card { padding: 2.5rem 2rem; background: rgba(255,255,255,0.03); border-top: 1px solid rgba(255,255,255,0.07); transition: background 0.3s; position: relative; overflow: hidden; }
+  .app-card::after { content: ''; position: absolute; top:0; left:0; right:0; height:2px; background: var(--terra); transform: scaleX(0); transition: transform 0.4s; transform-origin: left; }
+  .app-card:hover::after { transform: scaleX(1); }
+  .app-card:hover { background: rgba(255,255,255,0.07); }
+  .app-icon { font-size: 2rem; margin-bottom: 1rem; }
+  .app-card h3 { font-size: 1rem; font-weight: 500; margin-bottom: 0.6rem; }
+  .app-card p { font-size: 0.82rem; color: rgba(244,239,230,0.5); line-height: 1.7; font-weight: 300; }
+
+  /* COMPANION APP */
+  #companion { background: var(--cream); padding: 8rem 3rem; }
+  .companion-inner { max-width: 1200px; margin: 0 auto; }
+  .companion-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; }
+  .companion-title { font-size: clamp(2.5rem, 5vw, 4rem); color: var(--green-deep); margin-bottom: 2rem; }
+  .companion-features { display: flex; flex-direction: column; gap: 0; margin-top: 2rem; }
+  .app-feature { padding: 1.5rem 0; border-bottom: 1px solid var(--cream-dark); display: flex; gap: 1.2rem; align-items: flex-start; }
+  .app-feature-dot { width: 6px; height: 6px; background: var(--terra); border-radius: 50%; margin-top: 0.55rem; flex-shrink: 0; }
+  .app-feature h4 { font-size: 0.9rem; font-weight: 500; color: var(--green-deep); margin-bottom: 0.3rem; }
+  .app-feature p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.6; font-weight: 300; }
+  .phone-mockup { width: 100%; aspect-ratio: 9/16; max-width: 320px; background: var(--green-deep); border-radius: 2rem; margin: 0 auto; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 1rem; position: relative; overflow: hidden; box-shadow: 0 40px 80px rgba(14,31,14,0.4); }
+  .phone-screen { position: absolute; inset: 1px; border-radius: calc(2rem - 1px); overflow: hidden; background: #0e1f0e; }
+  .phone-status { display: flex; justify-content: space-between; padding: 0.8rem 1.2rem; font-size: 0.6rem; color: rgba(244,239,230,0.4); letter-spacing: 0.05em; }
+  .phone-widget { background: rgba(255,255,255,0.06); border-radius: 0.8rem; padding: 1rem; margin-bottom: 0.8rem; }
+  .phone-widget-title { font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--terra-light); margin-bottom: 0.5rem; }
+  .phone-widget-val { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; color: var(--cream); font-weight: 300; }
+  .phone-widget-sub { font-size: 0.5rem; color: rgba(244,239,230,0.4); margin-top: 0.2rem; }
+  .ph-bars { display: flex; gap: 3px; align-items: flex-end; height: 30px; margin-top: 0.5rem; }
+  .ph-bar { flex:1; background: var(--green-pale); border-radius: 2px; opacity: 0.7; }
+
+  /* FUTURE */
+  #future { background: var(--white); padding: 8rem 3rem; }
+  .future-inner { max-width: 1200px; margin: 0 auto; }
+  .future-title { font-size: clamp(2.5rem, 5vw, 4rem); color: var(--green-deep); margin-bottom: 1rem; }
+  .future-sub { color: var(--text-muted); font-weight: 300; margin-bottom: 4rem; max-width: 500px; }
+  .future-timeline { position: relative; padding-left: 3rem; }
+  .future-timeline::before { content:''; position:absolute; left:1.5rem; top:0; bottom:0; width:1px; background: var(--cream-dark); }
+  .timeline-item { position: relative; margin-bottom: 3rem; }
+  .timeline-dot { position: absolute; left: -1.95rem; top: 0.3rem; width: 10px; height: 10px; background: var(--terra); border-radius: 50%; }
+  .timeline-phase { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--terra); margin-bottom: 0.4rem; font-weight: 500; }
+  .timeline-item h4 { font-size: 1rem; font-weight: 500; color: var(--green-deep); margin-bottom: 0.5rem; }
+  .timeline-item p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.7; font-weight: 300; }
+
+  /* COMMERCIALIZATION */
+  #commercialize { background: var(--green-deep); padding: 8rem 3rem; color: var(--cream); }
+  .comm-inner { max-width: 1200px; margin: 0 auto; }
+  .comm-title { font-size: clamp(2.5rem, 5vw, 4rem); margin-bottom: 1rem; }
+  .comm-sub { color: rgba(244,239,230,0.55); margin-bottom: 4rem; font-weight: 300; max-width: 500px; }
+  .comm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .comm-card { padding: 2.5rem; border: 1px solid rgba(255,255,255,0.1); transition: border-color 0.3s, background 0.3s; }
+  .comm-card:hover { border-color: var(--terra); background: rgba(196,98,45,0.05); }
+  .comm-card-tag { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--terra); margin-bottom: 1rem; }
+  .comm-card h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 600; margin-bottom: 1rem; }
+  .comm-card p { font-size: 0.85rem; color: rgba(244,239,230,0.55); line-height: 1.7; font-weight: 300; margin-bottom: 1.5rem; }
+  .comm-list { display: flex; flex-direction: column; gap: 0.5rem; }
+  .comm-list li { font-size: 0.82rem; color: rgba(244,239,230,0.5); padding-left: 1rem; position: relative; font-weight: 300; }
+  .comm-list li::before { content:'—'; position:absolute; left:0; color:var(--terra); opacity:0.6; }
+
+  /* IET */
+  #iet-thanks { padding: 7rem 3rem; background: linear-gradient(160deg, var(--ink) 60%, #1a1208 100%); color: var(--cream); position: relative; overflow: hidden; }
+  #iet-thanks::before { content: "IET"; position: absolute; top: -2rem; right: -1rem; font-size: clamp(8rem, 20vw, 18rem); font-weight: 900; color: rgba(255,255,255,0.025); letter-spacing: -0.05em; pointer-events: none; line-height: 1; font-family: 'Cormorant Garamond', serif; }
+  .iet-inner { max-width: 860px; margin: 0 auto; }
+  .iet-title { margin-bottom: 2.5rem; }
+  .iet-badge-row { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 3rem; }
+  .iet-badge { display: inline-block; padding: 0.45rem 1.1rem; border-radius: 999px; border: 1.5px solid var(--gold); color: var(--gold); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em; background: rgba(184,169,106,0.07); }
+  .iet-body { display: flex; flex-direction: column; gap: 1.35rem; }
+  .iet-body p { font-size: clamp(1rem, 1.5vw, 1.05rem); line-height: 1.85; color: rgba(244,239,230,0.8); }
+  .iet-body strong { color: var(--cream); font-weight: 600; }
+  .iet-divider { width: 60px; height: 2px; background: var(--terra); margin: 3rem 0; opacity: 0.6; }
+  .iet-quote { border-left: 3px solid var(--terra); padding-left: 1.5rem; margin: 0; font-family: 'Cormorant Garamond', serif; font-size: clamp(1.1rem, 1.8vw, 1.35rem); font-style: italic; color: rgba(244,239,230,0.6); line-height: 1.7; }
+  .iet-sub-label { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--terra); font-weight: 600; margin-bottom: -0.5rem; }
+  .iet-people-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.25rem; }
+  .iet-person-card { padding: 1.2rem 1.4rem; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.03); border-radius: 2px; transition: border-color 0.3s, background 0.3s; }
+  .iet-person-card:hover { border-color: rgba(196,98,45,0.4); background: rgba(196,98,45,0.05); }
+  .iet-person-name { font-size: 0.92rem; font-weight: 600; color: var(--cream); margin-bottom: 0.15rem; }
+  .iet-person-role { font-size: 0.73rem; color: var(--terra-light); letter-spacing: 0.03em; margin-bottom: 0.5rem; }
+  .iet-person-note { font-size: 0.8rem; color: rgba(244,239,230,0.55); line-height: 1.6; font-weight: 300; }
+
+  /* CONTACT */
+  #contact { background: var(--cream); padding: 8rem 3rem; }
+  .contact-inner { max-width: 800px; margin: 0 auto; text-align: center; }
+  .contact-title { font-size: clamp(2.5rem, 6vw, 5rem); color: var(--green-deep); margin-bottom: 1.5rem; }
+  .contact-sub { font-size: 1.1rem; color: var(--text-muted); font-weight: 300; margin-bottom: 3rem; line-height: 1.7; }
+  .contact-name { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-style: italic; font-weight: 300; color: var(--green-deep); margin-bottom: 0.3rem; }
+  .contact-detail { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.2rem; letter-spacing: 0.05em; }
+  .contact-divider { width: 60px; height: 1px; background: var(--terra); margin: 2.5rem auto; }
+
+  /* NUMBERS */
+  #numbers { background: var(--terra); padding: 5rem 3rem; }
+  .numbers-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; }
+  .number-item { padding: 2rem; border-right: 1px solid rgba(255,255,255,0.2); text-align: center; }
+  .number-item:last-child { border-right: none; }
+  .number-val { font-family: 'Cormorant Garamond', serif; font-size: 3.5rem; font-weight: 600; color: var(--cream); line-height: 1; }
+  .number-label { font-size: 0.78rem; color: rgba(255,255,255,0.7); margin-top: 0.5rem; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 400; }
+
+  /* FOOTER */
+  footer { background: var(--green-deep); padding: 3rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+  .footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 300; color: var(--cream); letter-spacing: 0.1em; }
+  .footer-tagline { font-size: 0.8rem; color: rgba(244,239,230,0.4); margin-top: 0.2rem; letter-spacing: 0.05em; }
+  .footer-right { text-align: right; font-size: 0.78rem; color: rgba(244,239,230,0.3); line-height: 1.7; font-weight: 300; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    nav.scrolled { padding: 0.8rem 1.5rem; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .problem-header, .solution-grid, .income-grid, .companion-grid, .lim-grid, .comm-grid, .proto-header { grid-template-columns: 1fr; gap: 2rem; }
+    .stats-grid, .problem-points, .hydro-grid, .market-panel.active, .app-grid { grid-template-columns: 1fr 1fr; }
+    .numbers-inner { grid-template-columns: 1fr 1fr; }
+    .hydro-process { grid-template-columns: 1fr 1fr; }
+    .proto-gallery-new { grid-template-columns: 1fr 1fr; }
+    .proto-img-cell:nth-child(1) { grid-row: auto; grid-column: 1/-1; }
+    .build-strip { grid-template-columns: 1fr 1fr; }
+    .prize-gallery-new { grid-template-columns: 1fr 1fr; }
+    .prize-img-cell:nth-child(1) { grid-row: auto; grid-column: 1/-1; }
+    #hero, #problem, #solution, #hydroponics, #comparison, #income, #prototype, #market, #limitations, #applications, #companion, #future, #commercialize, #iet-thanks, #contact { padding: 5rem 1.5rem; }
+    footer { padding: 2rem 1.5rem; }
+    .iet-people-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .stats-grid, .problem-points, .hydro-grid, .market-panel.active, .app-grid, .numbers-inner, .comm-grid { grid-template-columns: 1fr; }
+    .proto-crops { grid-template-columns: 1fr; }
+    .hydro-process { grid-template-columns: 1fr; }
+    .process-step { border-right: none; border-bottom: 1px solid var(--cream-dark); }
+    .iet-people-grid { grid-template-columns: 1fr; }
+    .build-strip { grid-template-columns: 1fr; }
+    .prize-gallery-new { grid-template-columns: 1fr; }
+  }
+  .solution-img-frame img {
+  width: 100%;
+  height: 100%;        /* keeps original aspect ratio */
+  object-fit: contain; /* ensures full image is visible */
+  display: block;
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#hero" class="nav-logo">ANNAPURNA</a>
+  <ul class="nav-links">
+    <li><a href="#problem">Problem</a></li>
+    <li><a href="#solution">Solution</a></li>
+    <li><a href="#income">Income</a></li>
+    <li><a href="#prototype">Prototype</a></li>
+    <li><a href="#applications">Applications</a></li>
+    <li><a href="#companion">App</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grain"></div>
+  <p class="hero-eyebrow"> Agri-Innovation</p>
+  <h1 class="hero-title">Feed the <em>City.</em><br/>Not the Field.</h1>
+  <p class="hero-sub">ANNAPURNA is a compact vertical hydroponic farming system delivering year-round fresh food — anywhere people live.</p>
+  <div class="hero-tagline">
+    <span class="tagline-item" data-index="0">11× more yield than soil farming</span>
+    <span class="tagline-item" data-index="1">90% less water consumed</span>
+    <span class="tagline-item" data-index="2">Zero pesticides. Zero seasons.</span>
+    <span class="tagline-item" data-index="3">Fresh food. Anywhere. Always.</span>
+  </div>
+  <div class="hero-cta">
+    <a href="#problem" class="btn-primary">Explore the Project</a>
+    <a href="#prototype" class="btn-outline">See the Prototype</a>
+  </div>
+  <div class="hero-scroll-hint">
+    <div class="scroll-line"></div>
+    <span class="scroll-label">Scroll</span>
+  </div>
+</section>
+
+<!-- NUMBERS BAR -->
+<section id="numbers">
+  <div class="numbers-inner">
+    <div class="number-item reveal">
+      <div class="number-val" data-count="11" data-suffix="×">0×</div>
+      <div class="number-label">Yield vs Soil Farming</div>
+    </div>
+    <div class="number-item reveal reveal-delay-1">
+      <div class="number-val" data-count="90" data-suffix="%">0%</div>
+      <div class="number-label">Less Water Used</div>
+    </div>
+    <div class="number-item reveal reveal-delay-2">
+      <div class="number-val" data-count="100" data-suffix="+">0</div>
+      <div class="number-label">Plants Per Unit</div>
+    </div>
+    <div class="number-item reveal reveal-delay-3">
+      <div class="number-val" data-count="166000" data-prefix="₹" data-suffix="">₹0</div>
+      <div class="number-label">Annual Net Profit Possible</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="problem-inner">
+    <div class="problem-header">
+      <div>
+        <div class="section-label reveal">01 — The Problem</div>
+        <h2 class="section-title problem-title reveal reveal-delay-1" style="color:var(--cream)">Our food system<br/>is <em style="font-style:italic;color:var(--gold)">breaking.</em></h2>
+      </div>
+      <p class="problem-quote reveal reveal-delay-2">"By 2050, 68% of the world's population will live in cities — yet our food still grows far from where we eat it."</p>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card reveal"><div class="stat-num">68%</div><div class="stat-label">of global population projected to be urban by 2050 (UN, 2018)</div></div>
+      <div class="stat-card reveal reveal-delay-1"><div class="stat-num">40%</div><div class="stat-label">of India's arable land already degraded or facing water stress</div></div>
+      <div class="stat-card reveal reveal-delay-2"><div class="stat-num">70%</div><div class="stat-label">of global freshwater consumption goes to agriculture</div></div>
+      <div class="stat-card reveal reveal-delay-3"><div class="stat-num">1.6B</div><div class="stat-label">people globally face water scarcity — a number rising with climate change</div></div>
+    </div>
+    <div class="problem-points">
+      <div class="problem-point reveal"><div class="problem-point-num">01</div><h3>Shrinking Farmland</h3><p>Rapid urbanization is consuming agricultural land at an unprecedented rate. India loses over 30,000 sq km of farmland to urban expansion each decade.</p></div>
+      <div class="problem-point reveal reveal-delay-1"><div class="problem-point-num">02</div><h3>Water Crisis</h3><p>Groundwater tables are falling across India's most productive farming regions. Conventional farming is unsustainably water-intensive — we cannot continue as before.</p></div>
+      <div class="problem-point reveal reveal-delay-2"><div class="problem-point-num">03</div><h3>Climate Instability</h3><p>Erratic monsoons, heat waves, and extreme weather events make rain-dependent farming increasingly unpredictable, threatening food security for millions.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUTION -->
+<section id="solution">
+  <div class="solution-inner">
+    <div class="solution-grid">
+      <div>
+        <div class="section-label reveal">02 — Proposed Solution</div>
+        <h2 class="section-title solution-title reveal reveal-delay-1">ANNAPURNA:<br/>Grow <em style="font-style:italic;color:var(--terra)">up,</em><br/>not out.</h2>
+        <p class="solution-text reveal reveal-delay-2">ANNAPURNA is a compact, modular vertical hydroponic farming system built for dense urban and semi-urban environments. Instead of spreading across acres of land, it stacks multiple plants into a small footprint — on your balcony, rooftop, or institution.</p>
+        <p class="solution-text reveal reveal-delay-3">Built from accessible materials, automated with low-cost sensors, and designed to be repaired by anyone — it puts production-grade farming within reach of households, SHGs, and communities.</p>
+        <div class="solution-features reveal reveal-delay-4">
+          <div class="feature-row"><span class="feature-icon">🌿</span><div class="feature-text"><h4>Modular PVC Frame</h4><p>Small footprint, stackable growing levels. Assembled with standard plumbing parts — no special tools needed.</p></div></div>
+          <div class="feature-row"><span class="feature-icon">💧</span><div class="feature-text"><h4>Closed-Loop Nutrient System</h4><p>150L reservoir recirculates nutrient solution through all levels — zero runoff, minimal waste, maximum efficiency.</p></div></div>
+          <div class="feature-row"><span class="feature-icon">⚡</span><div class="feature-text"><h4>Smart ESP32 Automation</h4><p>pH, EC/TDS, and climate sensors feed a rules engine that automatically adjusts dosing, lighting, and ventilation in real time.</p></div></div>
+          <div class="feature-row"><span class="feature-icon">💡</span><div class="feature-text"><h4>Full-Spectrum LED Lighting</h4><p>5m of LED strips, 12–24V driver, timer or automation-controlled — enabling year-round growth independent of season.</p></div></div>
+        </div>
+      </div>
+      <div class="solution-visual reveal reveal-delay-2">
+        <!-- ENHANCED SOLUTION IMAGE -->
+        <div class="solution-img-frame" style="background-color: #F4EFE6;">
+          <img src="Finalround.pptx.jpg" alt="ANNAPURNA vertical hydroponic system at IET National Finals">
+        </div>
+        <div class="solution-badge">
+          <div class="badge-num">₹21,738</div>
+          <div class="badge-label">Full System Cost</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HYDROPONICS -->
+<section id="hydroponics">
+  <div class="hydro-inner">
+    <div class="hydro-header">
+      <div class="section-label reveal" style="justify-content:center">03 — About Hydroponics</div>
+      <h2 class="section-title hydro-title reveal reveal-delay-1">What is<br/><em style="font-style:italic;color:var(--terra)">hydroponics?</em></h2>
+      <p class="hydro-subtitle reveal reveal-delay-2">Plants don't actually need soil — they need nutrients, water, oxygen, and light. Hydroponics delivers all four directly, with zero waste and maximum precision.</p>
+    </div>
+    <div class="hydro-grid">
+      <div class="hydro-card reveal"><div class="hydro-card-icon">🧪</div><h3>No Soil Required</h3><p>Plants grow in inert media (cocopeat or rockwool) with roots bathed in a precisely calibrated nutrient solution — getting exactly what they need, when they need it.</p></div>
+      <div class="hydro-card reveal reveal-delay-1"><div class="hydro-card-icon">🔄</div><h3>Recirculating Water</h3><p>Nutrient solution flows from a central reservoir through all grow channels and returns back — using 80–90% less water than soil farming by eliminating evaporation and runoff.</p></div>
+      <div class="hydro-card reveal reveal-delay-2"><div class="hydro-card-icon">📈</div><h3>Accelerated Growth</h3><p>With nutrients delivered directly to roots and optimal lighting conditions, hydroponic plants grow 30–50% faster and produce yields up to 11× higher than soil equivalents.</p></div>
+    </div>
+    <div class="hydro-process">
+      <div class="process-step reveal"><div class="process-num">01</div><h4>Germination</h4><p>Seeds are placed in cocopeat-filled net cups. With daily moisture, roots emerge in 9–10 days.</p></div>
+      <div class="process-step reveal reveal-delay-1"><div class="process-num">02</div><h4>Transfer to System</h4><p>Healthy seedlings are inserted into the uPVC channels. The nutrient solution begins circulation immediately.</p></div>
+      <div class="process-step reveal reveal-delay-2"><div class="process-num">03</div><h4>Active Growth</h4><p>Sensors monitor pH and EC continuously. Automated peristaltic pumps dose nutrients to maintain ideal balance.</p></div>
+      <div class="process-step reveal reveal-delay-3"><div class="process-num">04</div><h4>Harvest</h4><p>Leafy greens are ready in 21–30 days. Fruiting crops in 37–60 days — far faster than soil equivalents.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section id="comparison">
+  <div class="comparison-inner">
+    <div class="section-label reveal" style="justify-content:center;color:var(--terra)">04 — Science Says</div>
+    <h2 class="section-title comparison-title reveal reveal-delay-1">Hydroponic vs.<br/><em style="font-style:italic;color:var(--gold)">Traditional Farming</em></h2>
+    <p class="comparison-sub reveal reveal-delay-2">Data from controlled studies comparing hydroponic and soil-grown produce across key performance indicators.</p>
+    <div class="reveal reveal-delay-3">
+      <table class="compare-table">
+        <thead><tr><th>Parameter</th><th class="hydro-col">🌿 ANNAPURNA (Hydroponic)</th><th class="soil-col">Conventional Soil</th></tr></thead>
+        <tbody>
+          <tr><td>Yield per sq. ft.</td><td class="good">Up to 11× higher</td><td class="bad">Baseline</td></tr>
+          <tr><td>Water consumption</td><td class="good">80–90% less</td><td class="bad">Very high (irrigation + runoff)</td></tr>
+          <tr><td>Growth cycle (leafy)</td><td class="good">21–30 days</td><td class="bad">45–60 days</td></tr>
+          <tr><td>First flowering (tomato)</td><td class="good">Day 37</td><td class="bad">Day 103</td></tr>
+          <tr><td>Pesticide requirement</td><td class="good">Minimal to none</td><td class="bad">Regular applications</td></tr>
+          <tr><td>Land required</td><td class="good">Rooftop / balcony</td><td class="bad">Large open farmland</td></tr>
+          <tr><td>Seasonal dependency</td><td class="good">None — year-round</td><td class="bad">High — monsoon dependent</td></tr>
+          <tr><td>Nutrient density</td><td class="good">Higher phytochemicals</td><td class="bad">Variable, soil-dependent</td></tr>
+          <tr><td>Labour intensity</td><td class="good">Low (automated)</td><td class="bad">High (plowing, weeding)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- INCOME -->
+<section id="income">
+  <div class="income-inner">
+    <div class="income-grid">
+      <div>
+        <div class="section-label reveal">05 — Economics</div>
+        <h2 class="section-title income-title reveal reveal-delay-1">Real income.<br/>Real <em style="font-style:italic;color:var(--terra)">numbers.</em></h2>
+        <p class="solution-text reveal reveal-delay-2">A single ANNAPURNA unit dedicated to microgreens — India's fastest-growing premium produce category — can generate substantial net profit within the first year of operation.</p>
+        <div class="income-breakdown reveal reveal-delay-3">
+          <div class="income-row"><span class="income-row-label">Growing cycles per year</span><span class="income-row-value">~36 cycles (10 days each)</span></div>
+          <div class="income-row"><span class="income-row-label">Yield per cycle</span><span class="income-row-value">3.3 kg microgreens</span></div>
+          <div class="income-row"><span class="income-row-label">Total annual yield</span><span class="income-row-value">~120 kg</span></div>
+          <div class="income-row"><span class="income-row-label">Premium selling price</span><span class="income-row-value">₹1,500 / kg</span></div>
+          <div class="income-row"><span class="income-row-label">Gross annual revenue</span><span class="income-row-value">₹1,80,000</span></div>
+          <div class="income-row"><span class="income-row-label">Annual operating costs</span><span class="income-row-value">~₹14,680</span></div>
+          <div class="income-row" style="border-bottom:none;padding-top:1.5rem;"><span class="income-row-label" style="font-weight:500;color:var(--green-deep)">Net annual profit</span><span class="income-row-value highlight">~₹1,66,000</span></div>
+        </div>
+      </div>
+      <div class="income-visual reveal reveal-delay-2">
+        <div class="income-bar-item">
+          <div class="income-bar-label"><span>Revenue</span><span>₹1,80,000</span></div>
+          <div class="income-bar-track"><div class="income-bar-fill" style="width:0%" data-width="100%"></div></div>
+        </div>
+        <div class="income-bar-item">
+          <div class="income-bar-label"><span>Operating Costs</span><span>₹14,680</span></div>
+          <div class="income-bar-track"><div class="income-bar-fill terra" style="width:0%" data-width="8%"></div></div>
+        </div>
+        <div class="income-bar-item">
+          <div class="income-bar-label"><span>Net Profit</span><span>₹1,66,000</span></div>
+          <div class="income-bar-track"><div class="income-bar-fill" style="width:0%;background:var(--green-pale)" data-width="92%"></div></div>
+        </div>
+        <div class="income-profit-box">
+          <div class="profit-num">₹1.66L</div>
+          <div class="profit-label">Net profit — single unit — per year</div>
+        </div>
+        <p style="font-size:0.75rem;color:var(--text-muted);margin-top:1rem;line-height:1.6;font-weight:300;">Energy consumption: 0.5–1 kWh/day. System footprint: 12 sq. ft. Suitable for balconies, rooftops, and small commercial spaces.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROTOTYPE -->
+<section id="prototype">
+  <div class="proto-inner">
+    <div class="proto-header">
+      <div>
+        <div class="section-label reveal">06 — Proof of Concept</div>
+        <h2 class="section-title proto-title reveal reveal-delay-1">The Prototype:<br/><em style="font-style:italic;color:var(--terra)">Built. Tested.<br/>It Works.</em></h2>
+      </div>
+      <p class="proto-desc reveal reveal-delay-2">Built and installed on a real balcony using uPVC pipes and a basic support frame, this prototype validated the core principles of ANNAPURNA under natural sunlight conditions. No artificial lighting — just 6–8 hours of daily sun, a simple nutrient system, and the right growing medium. Within 10 days, seeds became seedlings. Within 37 days, tomatoes had their first flowers — a milestone that takes soil plants over 100 days.</p>
+    </div>
+
+    <!-- CROPS IN ACTION -->
+    <div class="gallery-section-head reveal">
+      <span class="gallery-section-label">Crops in Action</span>
+      <div class="gallery-section-line"></div>
+      <span class="gallery-count">Live from the balcony prototype</span>
+    </div>
+    <div class="proto-gallery-new reveal reveal-delay-1">
+      <!-- Tall hero image -->
+      <div class="proto-img-cell" style="min-height:400px;">
+        <img src="Hydroponic.jpg" alt="Full hydroponic system view">
+        <div class="img-overlay">
+          <div class="img-label-tag">Full System</div>
+          <div class="img-label-title">ANNAPURNA Prototype</div>
+          <div class="img-label-sub">3-tier vertical uPVC system · Balcony-installed · Natural sunlight</div>
+        </div>
+      </div>
+      <!-- Basil -->
+      <div class="proto-img-cell" style="aspect-ratio:4/3;">
+        <img src="Basil.jpeg" alt="Italian basil growing hydroponically">
+        <div class="img-overlay">
+          <div class="img-label-tag">Middle Level</div>
+          <div class="img-label-title">Italian Basil</div>
+          <div class="img-label-sub">Harvest-ready in 21 days · pH 6.0–6.5</div>
+        </div>
+      </div>
+      <!-- Cherry Tomatoes -->
+      <div class="proto-img-cell" style="aspect-ratio:4/3;">
+        <img src="Tomato.jpeg" alt="Cherry tomato plants in hydroponic system">
+        <div class="img-overlay">
+          <div class="img-label-tag">Top Level</div>
+          <div class="img-label-title">Cherry Tomatoes</div>
+          <div class="img-label-sub">Vigorous growth · Dense canopy by Day 27</div>
+        </div>
+      </div>
+      <!-- Tomato Flower -->
+      <div class="proto-img-cell" style="aspect-ratio:4/3;">
+        <img src="TomatoFlower.jpeg" alt="First tomato flower at Day 37">
+        <div class="img-overlay">
+          <div class="img-label-tag">Milestone</div>
+          <div class="img-label-title">First Flower</div>
+          <div class="img-label-sub">Day 37 · 66 days ahead of soil equivalent</div>
+        </div>
+        <div class="img-overlay-top">
+          <div class="img-label-day">Day 37</div>
+        </div>
+      </div>
+      <!-- Lettuce -->
+      <div class="proto-img-cell" style="aspect-ratio:4/3;">
+        <img src="Lettuce.jpeg" alt="Lettuce growing alongside basil">
+        <div class="img-overlay">
+          <div class="img-label-tag">Middle Level</div>
+          <div class="img-label-title">Iceberg Lettuce</div>
+          <div class="img-label-sub">Co-grown with basil · Compatible pH range</div>
+        </div>
+      </div>
+      <!-- Capsicum -->
+      <div class="proto-img-cell" style="aspect-ratio:6/4;">
+        <img src="Capsicum.jpeg" alt="Bell peppers growing at bottom level">
+        <div class="img-overlay">
+          <div class="img-label-tag">Bottom Level</div>
+          <div class="img-label-title">Bell Peppers</div>
+          <div class="img-label-sub">Fruiting crop · Isolated nutrient feed demonstrated</div>
+        </div>
+      </div>
+      <!-- Capsicum Flower -->
+      <div class="proto-img-cell" style="aspect-ratio:6/6;">
+        <img src="CapsicumFlower.jpeg" alt="Bell pepper flower close-up">
+        <div class="img-overlay">
+          <div class="img-label-tag">Milestone</div>
+          <div class="img-label-title">Pepper in Bloom</div>
+          <div class="img-label-sub">Fruiting stage confirmed · Coexisting with leafy greens</div>
+        </div>
+      </div>
+      <!-- Tomato Harvest -->
+      <div class="proto-img-cell" style="aspect-ratio:6/6;">
+        <img src="Tomatofruit1.jpeg" alt="Lettuce growing alongside basil">
+        <div class="img-overlay">
+          <div class="img-label-tag">Harvest</div>
+          <div class="img-label-title">Cherry Tomato</div>
+          <div class="img-label-sub">Day 47 · 86 days ahead of soil equivalent</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BUILD PROCESS -->
+    <div class="gallery-section-head reveal" style="margin-top:3.5rem;">
+      <span class="gallery-section-label"> How I Built It</span>
+      <div class="gallery-section-line"></div>
+      <span class="gallery-count">Assembly process · 3 steps</span>
+    </div>
+    <div class="build-strip reveal reveal-delay-1">
+      <div class="build-img-cell">
+        <img src="BuildingFrame.jpeg" alt="Building the structural frame">
+        <div class="step-badge">01</div>
+        <div class="img-overlay">
+          <div class="img-label-tag">Step 1 — Structure</div>
+          <div class="img-label-title">Frame Assembly</div>
+          <div class="img-label-sub">PVC frame · Supports 3 uPVC grow channels</div>
+        </div>
+      </div>
+      <div class="build-img-cell">
+        <img src="BuildingPipes.jpeg" alt="Installing uPVC grow channels">
+        <div class="step-badge">02</div>
+        <div class="img-overlay">
+          <div class="img-label-tag">Step 2 — Plumbing</div>
+          <div class="img-label-title">Pipe Installation</div>
+          <div class="img-label-sub">uPVC channels drilled for net cups · Gravity-fed flow path</div>
+        </div>
+      </div>
+      <div class="build-img-cell">
+        <img src="Fillingcocopeat.jpeg" alt="Filling net cups with cocopeat growing medium">
+        <div class="step-badge">03</div>
+        <div class="img-overlay">
+          <div class="img-label-tag">Step 3 — Growing Media</div>
+          <div class="img-label-title">Preparing Net Cups</div>
+          <div class="img-label-sub">Cocopeat-filled net cups · Ready for seedling transfer</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="proto-crops">
+      <div class="crop-card reveal"><div class="crop-level">Top Level</div><h4>Cherry Tomatoes</h4><p>First flowers at Day 37. Dense canopy and vigorous growth by Day 27 — over 60 days ahead of soil-grown equivalents.</p></div>
+      <div class="crop-card reveal reveal-delay-1"><div class="crop-level">Middle Level</div><h4>Basil &amp; Lettuce</h4><p>Italian basil and lettuce thrived simultaneously at compatible pH ranges. Ready for harvest within 3 weeks.</p></div>
+      <div class="crop-card reveal reveal-delay-2"><div class="crop-level">Bottom Level</div><h4>Bell Peppers</h4><p>Demonstrated that fruiting crops can coexist with leafy greens in the same modular system with isolated nutrient feeds.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- MARKET -->
+<section id="market">
+  <div class="market-inner">
+    <div class="section-label reveal" style="color:var(--terra)">07 — Market Potential</div>
+    <h2 class="section-title market-title reveal reveal-delay-1">A premium market<br/><em style="font-style:italic;color:var(--gold)">ready to be served.</em></h2>
+    <p class="market-sub reveal reveal-delay-2">Hydroponic produce commands significant price premiums in both domestic and export markets, with growing demand from urban consumers and institutional buyers.</p>
+    <div class="market-tabs reveal reveal-delay-3">
+      <div class="market-tab active" onclick="switchTab('domestic')">🇮🇳 Domestic Market</div>
+      <div class="market-tab" onclick="switchTab('export')">🌏 Export Markets</div>
+    </div>
+    <div class="market-panel active" id="panel-domestic">
+      <div class="market-crop"><h4>Microgreens</h4><div class="price">₹1,200–₹2,000 / kg</div><p>Fastest-growing premium segment. Chefs, hotels, cloud kitchens, and health-conscious urban consumers drive strong demand.</p></div>
+      <div class="market-crop"><h4>Lettuce &amp; Spinach</h4><div class="price">₹150–₹400 / kg</div><p>High velocity, quick cycle. Supermarkets and restaurants prefer consistent pesticide-free supply year-round.</p></div>
+      <div class="market-crop"><h4>Cherry Tomatoes</h4><div class="price">₹200–₹500 / kg</div><p>Premium positioning vs. conventional tomatoes. Popular with urban retail and food service channels.</p></div>
+      <div class="market-crop"><h4>Herbs (Basil, Mint)</h4><div class="price">₹500–₹1,500 / kg</div><p>High-value, quick turnaround. Italian basil especially sought by restaurant and hotel supply chains.</p></div>
+      <div class="market-crop"><h4>Bell Peppers</h4><div class="price">₹120–₹300 / kg</div><p>Consistent quality and colour — ideal for supermarket chains and food processing industries.</p></div>
+      <div class="market-crop"><h4>Cucumbers</h4><div class="price">₹80–₹200 / kg</div><p>High yield, fast cycle. Good fit for local delivery models and institutional supply contracts.</p></div>
+    </div>
+    <div class="market-panel" id="panel-export">
+      <div class="market-crop"><h4>Cherry Tomatoes</h4><div class="price">Export Premium: 2–4×</div><p>Middle East and EU markets pay significant premiums for consistent quality, pesticide-free certification, and reliable supply.</p></div>
+      <div class="market-crop"><h4>Fresh Basil</h4><div class="price">Export Premium: 3–5×</div><p>European restaurant and retail markets demand fresh aromatic herbs year-round — a gap hydroponic systems can uniquely fill.</p></div>
+      <div class="market-crop"><h4>Microgreens</h4><div class="price">Export Premium: 2–3×</div><p>Southeast Asian markets — Singapore, Malaysia, Japan — are active buyers of premium microgreens from certified growers.</p></div>
+      <div class="market-crop"><h4>Bell Peppers</h4><div class="price">Export Premium: 1.5–2.5×</div><p>GCC countries import large volumes. Hydroponic production enables the color and size consistency export buyers require.</p></div>
+      <div class="market-crop"><h4>Specialty Crops</h4><div class="price">Saffron, Orchids, Stevia</div><p>At scale, ANNAPURNA's controlled environment supports ultra-high-value specialty crops for export premium segments.</p></div>
+      <div class="market-crop"><h4>Organic Certification</h4><div class="price">+20–40% premium</div><p>Pesticide-free hydroponic produce can qualify for organic certification, unlocking additional export price advantages.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- LIMITATIONS -->
+<section id="limitations">
+  <div class="lim-inner">
+    <div class="lim-grid">
+      <div>
+        <div class="section-label reveal">08 — Honest Assessment</div>
+        <h2 class="section-title lim-title reveal reveal-delay-1">Known<br/><em style="font-style:italic;color:var(--terra)">Limitations</em></h2>
+        <p class="lim-desc reveal reveal-delay-2">Every technology has constraints. Understanding them is part of designing solutions responsibly.</p>
+      </div>
+      <div class="lim-list">
+        <div class="lim-item reveal"><div class="lim-num">01</div><div><h4>Initial Setup Investment</h4><p>A fully equipped system costs ~₹21,738 upfront. While affordable compared to traditional farm infrastructure, it remains a barrier for very low-income households without microfinance support.</p></div></div>
+        <div class="lim-item reveal reveal-delay-1"><div class="lim-num">02</div><div><h4>Power Dependency</h4><p>The pump, LED lighting, and sensors require continuous electricity. Power outages can disrupt the system. Solar integration is planned but adds cost.</p></div></div>
+        <div class="lim-item reveal reveal-delay-2"><div class="lim-num">03</div><div><h4>Crop Limitations</h4><p>Root vegetables (potato, carrot, radish) and large grain crops are not suitable for this vertical NFT system. ANNAPURNA is best suited for leafy greens, herbs, and compact fruiting plants.</p></div></div>
+        <div class="lim-item reveal reveal-delay-3"><div class="lim-num">04</div><div><h4>Technical Learning Curve</h4><p>pH and EC monitoring requires basic training. Incorrect nutrient ratios can harm plants. The companion app and guided workflows aim to reduce this barrier significantly.</p></div></div>
+        <div class="lim-item reveal reveal-delay-4"><div class="lim-num">05</div><div><h4>Nutrient Solution Disposal</h4><p>Weekly nutrient solution replacement generates mild chemical wastewater. Proper disposal protocols are needed, especially at scale, to avoid soil or water contamination.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- APPLICATIONS -->
+<section id="applications">
+  <div class="app-inner">
+    <div class="section-label reveal" style="color:var(--terra)">09 — Use Cases</div>
+    <h2 class="section-title app-title reveal reveal-delay-1">Where can<br/><em style="font-style:italic;color:var(--gold)">ANNAPURNA go?</em></h2>
+    <p class="app-sub reveal reveal-delay-2">Anywhere people need fresh food. Almost everywhere, it turns out.</p>
+    <div class="app-grid">
+      <div class="app-card reveal"><div class="app-icon">🏠</div><h3>Urban Homes &amp; Balconies</h3><p>A daily kitchen garden delivering pesticide-free greens, herbs, and tomatoes — no plot of land needed.</p></div>
+      <div class="app-card reveal reveal-delay-1"><div class="app-icon">🏫</div><h3>Schools &amp; Colleges</h3><p>A living classroom for biology, IoT, sustainability, and entrepreneurship. Students grow, learn, and eat.</p></div>
+      <div class="app-card reveal reveal-delay-2"><div class="app-icon">🏥</div><h3>Hospitals &amp; Clinics</h3><p>On-site fresh produce for patient nutrition programs — zero transit time, zero contamination risk.</p></div>
+      <div class="app-card reveal reveal-delay-3"><div class="app-icon">🏪</div><h3>Retail &amp; Restaurants</h3><p>"Harvest-at-shelf" experiences for premium retailers and cloud kitchens demanding consistent, local supply.</p></div>
+      <div class="app-card reveal reveal-delay-4"><div class="app-icon">🪖</div><h3>Remote &amp; Extreme Environments</h3><p>Military outposts, disaster relief camps, and research stations — fresh food independent of supply chains or soil.</p></div>
+      <div class="app-card reveal reveal-delay-5"><div class="app-icon">🚀</div><h3>Space &amp; Future Habitats</h3><p>ANNAPURNA's closed-loop, low-water design directly informs bioregenerative life-support systems for long-duration space missions.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPANION APP -->
+<section id="companion">
+  <div class="companion-inner">
+    <div class="companion-grid">
+      <div>
+        <div class="section-label reveal">10 — Digital Layer</div>
+        <h2 class="section-title companion-title reveal reveal-delay-1">The<br/><em style="font-style:italic;color:var(--terra)">Companion<br/>App</em></h2>
+        <p class="solution-text reveal reveal-delay-2">Precision farming meets intuitive design. The ANNAPURNA companion app puts complete system control in your pocket — from first seed to final harvest.</p>
+        <div class="companion-features reveal reveal-delay-3">
+          <div class="app-feature"><div class="app-feature-dot"></div><div><h4>Real-Time Monitoring</h4><p>Live pH, EC/TDS, and air temperature–humidity readings via integrated sensors and Wi-Fi connected ESP32.</p></div></div>
+          <div class="app-feature"><div class="app-feature-dot"></div><div><h4>Smart Alerts</h4><p>Push notifications when parameters drift out of range — before your plants notice the problem.</p></div></div>
+          <div class="app-feature"><div class="app-feature-dot"></div><div><h4>Seed-to-Harvest Workflows</h4><p>Step-by-step guided workflows for every crop — germination, transplant, nutrient schedule, and harvest timing.</p></div></div>
+          <div class="app-feature"><div class="app-feature-dot"></div><div><h4>AI Crop Recommendations</h4><p>Tailored suggestions based on your local climate, season, market demand, and unit configuration.</p></div></div>
+          <div class="app-feature"><div class="app-feature-dot"></div><div><h4>Marketplace &amp; Community</h4><p>Connect with buyers, fellow growers, and agronomists — a digital ecosystem that grows alongside your plants.</p></div></div>
+        </div>
+      </div>
+      <div class="reveal reveal-delay-2" style="display:flex;justify-content:center;align-items:center;">
+        <div class="phone-mockup">
+          <div class="phone-screen">
+            <div class="phone-status"><span>9:41</span><span>● WiFi</span></div>
+            <div style="padding:0 1.2rem 1rem;">
+              <div style="font-size:0.55rem;text-transform:uppercase;letter-spacing:0.1em;color:rgba(244,239,230,0.35);margin-bottom:0.8rem;">ANNAPURNA / Dashboard</div>
+              <div class="phone-widget">
+                <div class="phone-widget-title">pH Level</div>
+                <div class="phone-widget-val">6.4</div>
+                <div class="phone-widget-sub" style="color:#7fd47f">✓ Optimal range</div>
+                <div class="ph-bars">
+                  <div class="ph-bar" style="height:40%"></div><div class="ph-bar" style="height:55%"></div><div class="ph-bar" style="height:70%"></div>
+                  <div class="ph-bar" style="height:65%;background:var(--terra)"></div><div class="ph-bar" style="height:60%"></div><div class="ph-bar" style="height:65%"></div><div class="ph-bar" style="height:64%"></div>
+                </div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+                <div class="phone-widget"><div class="phone-widget-title">EC/TDS</div><div class="phone-widget-val" style="font-size:1.3rem;">1.8</div><div class="phone-widget-sub">mS/cm</div></div>
+                <div class="phone-widget"><div class="phone-widget-title">Temp</div><div class="phone-widget-val" style="font-size:1.3rem;">24°</div><div class="phone-widget-sub" style="color:#7fd47f">✓ Good</div></div>
+              </div>
+              <div class="phone-widget" style="margin-top:0.5rem;">
+                <div class="phone-widget-title">Next Action</div>
+                <div style="font-size:0.65rem;color:var(--cream);margin-top:0.3rem;">💧 Nutrient refresh in <span style="color:var(--terra-light);font-weight:500;">2 days</span></div>
+                <div style="font-size:0.65rem;color:rgba(244,239,230,0.4);margin-top:0.2rem;">🌿 Basil harvest in 4 days</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FUTURE -->
+<section id="future">
+  <div class="future-inner">
+    <div style="display:grid;grid-template-columns:1fr 1.5fr;gap:6rem;align-items:start;">
+      <div>
+        <div class="section-label reveal">11 — Roadmap</div>
+        <h2 class="section-title future-title reveal reveal-delay-1">Future<br/><em style="font-style:italic;color:var(--terra)">Improvements</em></h2>
+        <p class="future-sub reveal reveal-delay-2">ANNAPURNA is a living system. Each iteration gets smarter, more affordable, and more impactful.</p>
+      </div>
+      <div class="future-timeline reveal reveal-delay-2">
+        <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-phase">Phase 1 — Near Term</div><h4>Solar Integration</h4><p>A 50W solar panel + battery backup eliminates grid dependency, making ANNAPURNA viable in power-unstable regions and dramatically reducing operating costs.</p></div>
+        <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-phase">Phase 1 — Near Term</div><h4>Rainwater Harvesting Coupling</h4><p>Integration with a simple rooftop rainwater collection system for RO water supply — reducing recurring water input costs to near zero.</p></div>
+        <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-phase">Phase 2 — Mid Term</div><h4>AI-Driven Crop Intelligence</h4><p>Computer vision-based plant health monitoring using camera modules — detecting deficiencies, diseases, and growth anomalies before they become problems.</p></div>
+        <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-phase">Phase 2 — Mid Term</div><h4>Aquaponics Integration</h4><p>Adding a fish tank below the grow structure creates a symbiotic loop — fish waste feeds plants, plants filter water — enabling protein production alongside vegetables.</p></div>
+        <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-phase">Phase 3 — Long Term</div><h4>Community-Scale Clusters</h4><p>Networked units sharing sensor data, nutrient supply, and logistics — creating micro food-production hubs at apartment complexes, schools, and community centers.</p></div>
+        <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-phase">Phase 3 — Long Term</div><h4>Bioregenerative Research</h4><p>Collaborations with ISRO and space research institutions to adapt ANNAPURNA's closed-loop design for extra-terrestrial habitat life-support systems.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMMERCIALIZATION -->
+<section id="commercialize">
+  <div class="comm-inner">
+    <div class="section-label reveal" style="color:var(--terra)">12 — Go to Market</div>
+    <h2 class="section-title comm-title reveal reveal-delay-1">Making it<br/><em style="font-style:italic;color:var(--gold)">real, at scale.</em></h2>
+    <p class="comm-sub reveal reveal-delay-2">ANNAPURNA is designed for two parallel deployment paths — empowering individual households and enabling commercial enterprises simultaneously.</p>
+    <div class="comm-grid">
+      <div class="comm-card reveal"><div class="comm-card-tag">For Individuals &amp; SHGs</div><h3>Home &amp; Community Scale</h3><p>A complete starter kit with guided setup, the companion app, and an initial nutrient supply — enabling households, self-help groups, and small entrepreneurs to start producing premium food within days.</p><ul class="comm-list"><li>Flat-pack modular kit — assembles in under 2 hours</li><li>Seed-to-harvest app guidance for first-time growers</li><li>Microfinance partnerships for low-income access</li><li>SHG bulk pricing and cluster deployment support</li><li>Direct-to-consumer marketplace integration via app</li></ul></div>
+      <div class="comm-card reveal reveal-delay-1"><div class="comm-card-tag">For Commercial Operators</div><h3>Enterprise &amp; Institutional Scale</h3><p>Multi-unit deployments for rooftop farms, institutional supply, export-oriented production, and co-working agri-hubs. Full automation, centralized monitoring dashboard, and supply chain integration.</p><ul class="comm-list"><li>10–500 unit commercial deployments</li><li>B2B supply contracts with hotels, hospitals, and supermarkets</li><li>Export certification and quality documentation support</li><li>Franchise model for agri-entrepreneurs in Tier 2/3 cities</li><li>Government scheme alignment (PM KUSUM, NABARD, SHG funds)</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- IET ACKNOWLEDGMENT -->
+<section id="iet-thanks">
+  <div class="iet-inner">
+    <div class="section-label reveal" style="color:var(--gold)">13 — Acknowledgments</div>
+    <h2 class="section-title iet-title reveal reveal-delay-1" style="color:var(--cream);font-size:clamp(2.5rem,5vw,4rem);">Thank you,<br/><em style="font-style:italic;color:var(--terra)">IET India.</em></h2>
+    <div class="iet-badge-row reveal reveal-delay-2">
+      <span class="iet-badge">1st Runner-Up · National Finals</span>
+      <span class="iet-badge">Winner · Regional Round (North &amp; North-East)</span>
+      <span class="iet-badge">₹1,70,000 Prize</span>
+    </div>
+    <div class="iet-body reveal reveal-delay-3">
+      <p>As a 4th-year B.Tech CSE student at Kalinga Institute of Technology, Bhubaneswar, I had the privilege of participating in the <strong>IET India Scholarship 2025</strong> — an inspiring platform that brings together young innovators from across the country. Being part of this journey allowed me to work deeply on ANNAPURNA, gain invaluable insights, and sharpen it through every stage of the competition. What began as an idea became a refined, battle-tested solution — shaped by the rigorous process IET created.</p>
+      <p>I extend my heartfelt gratitude to <strong>The IET</strong> for organising this remarkable initiative, for the critical feedback that pushed me to think harder, and for recognising work that genuinely strives to solve a real problem. A special note of thanks to my mentor, <strong>Prof. J. K. Roy</strong>, whose guidance after the Regional Round was transformative — his sharp critique and encouragement helped me present ANNAPURNA far more effectively at the National level, and his support played a direct role in this achievement.</p>
+      <div class="iet-sub-label reveal">Mentors &amp; Guides at KIIT</div>
+      <div class="iet-people-grid">
+        <div class="iet-person-card"><div class="iet-person-name">Dr. Subhra Debdas</div><div class="iet-person-role">School of Electrical Engineering, KIIT</div><div class="iet-person-note">Guided me in the early stages, patiently helping me navigate questions around hydroponics fundamentals and IoT system design.</div></div>
+        <div class="iet-person-card"><div class="iet-person-name">Dr. Srikant Mohapatra</div><div class="iet-person-role">School of Electrical Engineering, KIIT</div><div class="iet-person-note">Connected me with the right people at exactly the right moments and continuously encouraged my passion for innovation.</div></div>
+        <div class="iet-person-card"><div class="iet-person-name">Dr. Tanmaya Mohanty</div><div class="iet-person-role">KIIT Polytechnic</div><div class="iet-person-note">Helped bridge me to the right guidance networks and offered steadfast encouragement throughout this journey.</div></div>
+        <div class="iet-person-card"><div class="iet-person-name">Rakesh Roshan</div><div class="iet-person-role">KIIT Polytechnic</div><div class="iet-person-note">Generously shared his working hydroponic prototype. Studying its real-world shortcomings gave me the clarity to design ANNAPURNA with intention — building on what existed and improving what didn't.</div></div>
+      </div>
+      <p>Thank you to the jury, the organisers, and everyone who was part of this experience. It has been a truly meaningful milestone in my journey as an aspiring innovator.</p>
+    </div>
+    <div class="iet-divider reveal reveal-delay-4"></div>
+    <blockquote class="iet-quote reveal reveal-delay-4">"The right platform doesn't just give you an audience — it gives you the pressure, the peers, and the perspective to become better."</blockquote>
+  </div>
+
+  <!-- AWARDS GALLERY -->
+  <div style="max-width:1100px;margin:0 auto;padding:0 3rem;">
+    <div class="gallery-section-head reveal" style="margin-top:4rem;">
+      <span class="gallery-section-label" style="color:var(--gold)">Competition Journey</span>
+      <div class="gallery-section-line" style="background:rgba(184,169,106,0.2)"></div>
+      <span class="gallery-count" style="color:rgba(244,239,230,0.35)">Regional → National Finals</span>
+    </div>
+    <div class="prize-gallery-new reveal reveal-delay-1">
+      <!-- Hero: Regional round -->
+      <div class="prize-img-cell" style="min-height:380px;">
+        <img src="FinalCertificate.jpeg" alt="National finals certificate">
+        <div class="prize-img-overlay">
+          <div class="prize-label-tag">Winner</div>
+          <div class="prize-label-title">National Finals</div>
+          <div class="prize-label-sub">1st Runner-Up · Official recognition</div>
+        </div>
+      </div>
+      <!-- Final certificate -->
+      <div class="prize-img-cell" style="aspect-ratio:3/7;">
+        <img src="RegionalRound.jpeg" alt="Regional round win with trophy">
+        <div class="prize-img-overlay">
+          <div class="prize-label-tag">Certificate</div>
+          <div class="prize-label-title">Regional Round Victory</div>
+          <div class="prize-label-sub">North &amp; North-East Region · IET India Scholarship 2025</div>
+        </div>
+      </div>
+      <!-- Final trophy -->
+      <div class="prize-img-cell" style="aspect-ratio:3/7;">
+        <img src="FinalTrophy.jpeg" alt="National finals trophy">
+        <div class="prize-img-overlay">
+          <div class="prize-label-tag">Trophy</div>
+          <div class="prize-label-title">National Finals Award</div>
+          <div class="prize-label-sub">1st Runner-Up · ANNAPURNA</div>
+        </div>
+      </div>
+      <!-- Both trophies -->
+      <div class="prize-img-cell" style="aspect-ratio:3/3;">
+        <img src="Trophies.jpeg" alt="Both regional and national trophies together">
+        <div class="prize-img-overlay">
+          <div class="prize-label-tag">Both Rounds</div>
+          <div class="prize-label-title">Regional + National</div>
+          <div class="prize-label-sub">Two trophies · One journey</div>
+        </div>
+      </div>
+      <!-- National goodies -->
+      <div class="prize-img-cell" style="aspect-ratio:3/3;">
+        <img src="FinalRoundGoodies.jpeg" alt="National finals prize package">
+        <div class="prize-img-overlay">
+          <div class="prize-label-tag">National Goodies</div>
+          <div class="prize-label-title">Finals Prize Package</div>
+          <div class="prize-label-sub">₹1,70,000 total prize money</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner">
+    <div class="section-label reveal" style="justify-content:center">14 — Get In Touch</div>
+    <h2 class="section-title contact-title reveal reveal-delay-1">Interested in<br/><em style="font-style:italic;color:var(--terra)">ANNAPURNA?</em></h2>
+    <p class="contact-sub reveal reveal-delay-2">Whether you want to know more about the project, collaborate, invest, or simply grow your own food — we'd love to hear from you.</p>
+    <div class="contact-divider reveal reveal-delay-3"></div>
+    <div class="reveal reveal-delay-3">
+      <p class="contact-name">Vansika Jhawar</p>
+      <p class="contact-detail" style="margin-top:1rem;">vansika.jhawar18@gmail.com</p>
+      <p class="contact-detail">+91 9674795110</p>
+    </div>
+    <div class="contact-divider reveal reveal-delay-4"></div>
+    <a href="mailto:vansika.jhawar18@gmail.com" class="btn-primary reveal reveal-delay-4">Send a Message →</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-logo">ANNAPURNA</div>
+    <div class="footer-tagline">Grow local. Eat fresh. Live better.</div>
+  </div>
+  <div class="footer-right">
+    Vertical Hydroponic Farming System<br/>
+    <span style="color:rgba(244,239,230,0.2);font-size:0.7rem;">Built with purpose. Grown with care.</span>
+  </div>
+</footer>
+
+<script>
+  // CURSOR
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+  });
+  function animateRing() {
+    rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+  document.querySelectorAll('a, button, .hydro-card, .app-card, .comm-card, .market-tab, .proto-img-cell, .build-img-cell, .prize-img-cell').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursor.style.transform = 'translate(-50%,-50%) scale(2)'; ring.style.width = '60px'; ring.style.height = '60px'; });
+    el.addEventListener('mouseleave', () => { cursor.style.transform = 'translate(-50%,-50%) scale(1)'; ring.style.width = '36px'; ring.style.height = '36px'; });
+  });
+
+  // NAV SCROLL
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => { navbar.classList.toggle('scrolled', window.scrollY > 60); });
+
+  // HERO TAGLINE CYCLE
+  const taglines = document.querySelectorAll('.tagline-item');
+  let current = 0;
+  function cycleTags() {
+    taglines[current].classList.remove('active'); taglines[current].classList.add('exit');
+    setTimeout(() => { taglines[current].classList.remove('exit'); }, 600);
+    current = (current + 1) % taglines.length;
+    taglines[current].classList.add('active');
+  }
+  taglines[0].classList.add('active');
+  setInterval(cycleTags, 2500);
+
+  // REVEAL ON SCROLL
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  reveals.forEach(el => observer.observe(el));
+
+  // COUNTER ANIMATION
+  function animateCounter(el) {
+    const target = parseInt(el.dataset.count);
+    const prefix = el.dataset.prefix || '';
+    const suffix = el.dataset.suffix || '';
+    const duration = 1800;
+    const start = performance.now();
+    function step(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const value = Math.round(eased * target);
+      el.textContent = target >= 10000 ? prefix + value.toLocaleString('en-IN') + suffix : prefix + value + suffix;
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  const counterObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting && !e.target.dataset.animated) { e.target.dataset.animated = '1'; animateCounter(e.target); } });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.number-val[data-count]').forEach(el => counterObserver.observe(el));
+
+  // BAR ANIMATION
+  const barObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.querySelectorAll('.income-bar-fill').forEach(bar => { setTimeout(() => { bar.style.width = bar.dataset.width; }, 200); }); });
+  }, { threshold: 0.3 });
+  document.querySelectorAll('.income-visual').forEach(el => barObserver.observe(el));
+
+  // MARKET TABS
+  function switchTab(tab) {
+    document.querySelectorAll('.market-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.market-panel').forEach(p => p.classList.remove('active'));
+    document.querySelector(`[onclick="switchTab('${tab}')"]`).classList.add('active');
+    document.getElementById(`panel-${tab}`).classList.add('active');
+  }
+
+  // HAMBURGER
+  function toggleMenu() {
+    const links = document.querySelector('.nav-links');
+    const isOpen = links.style.display === 'flex';
+    links.style.display = isOpen ? 'none' : 'flex';
+    if (!isOpen) {
+      links.style.flexDirection = 'column'; links.style.position = 'absolute';
+      links.style.top = '100%'; links.style.left = '0'; links.style.right = '0';
+      links.style.background = 'rgba(14,31,14,0.98)'; links.style.padding = '1.5rem'; links.style.gap = '1.2rem';
+    }
+  }
+</script>
+</body>
+</html>
