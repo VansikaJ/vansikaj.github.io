@@ -1513,16 +1513,16 @@ nav.scrolled { background: rgba(14,31,14,0.96); backdrop-filter: blur(12px); box
   }
 
   // HAMBURGER
-  function toggleMenu() {
-    const links = document.querySelector('.nav-links');
-    const isOpen = links.style.display === 'flex';
-    links.style.display = isOpen ? 'none' : 'flex';
-    if (!isOpen) {
-      links.style.flexDirection = 'column'; links.style.position = 'absolute';
-      links.style.top = '100%'; links.style.left = '0'; links.style.right = '0';
-      links.style.background = 'rgba(14,31,14,0.98)'; links.style.padding = '1.5rem'; links.style.gap = '1.2rem';
-    }
-  }
+  // function toggleMenu() {
+  //  const links = document.querySelector('.nav-links');
+  //  const isOpen = links.style.display === 'flex';
+  //  links.style.display = isOpen ? 'none' : 'flex';
+  //  if (!isOpen) {
+  //    links.style.flexDirection = 'column'; links.style.position = 'absolute';
+  //    links.style.top = '100%'; links.style.left = '0'; links.style.right = '0';
+  //    links.style.background = 'rgba(14,31,14,0.98)'; links.style.padding = '1.5rem'; links.style.gap = '1.2rem';
+  //  }
+  //}
 
   // Mobile menu
   document.querySelector('.hamburger').addEventListener('click', () => {
