@@ -611,25 +611,6 @@ nav.scrolled { background: rgba(14,31,14,0.96); backdrop-filter: blur(12px); box
   .footer-tagline { font-size: 0.8rem; color: rgba(244,239,230,0.4); margin-top: 0.2rem; letter-spacing: 0.05em; }
   .footer-right { text-align: right; font-size: 0.78rem; color: rgba(244,239,230,0.3); line-height: 1.7; font-weight: 300; }
 
-  /* RESPONSIVE */
-  @media (max-width: 900px) {
-    nav { padding: 1rem 1.5rem; }
-    nav.scrolled { padding: 0.8rem 1.5rem; }
-    .nav-links { display: none; }
-    .hamburger { display: flex; }
-    .problem-header, .solution-grid, .income-grid, .companion-grid, .lim-grid, .comm-grid, .proto-header { grid-template-columns: 1fr; gap: 2rem; }
-    .stats-grid, .problem-points, .hydro-grid, .market-panel.active, .app-grid { grid-template-columns: 1fr 1fr; }
-    .numbers-inner { grid-template-columns: 1fr 1fr; }
-    .hydro-process { grid-template-columns: 1fr 1fr; }
-    .proto-gallery-new { grid-template-columns: 1fr 1fr; }
-    .proto-img-cell:nth-child(1) { grid-row: auto; grid-column: 1/-1; }
-    .build-strip { grid-template-columns: 1fr 1fr; }
-    .prize-gallery-new { grid-template-columns: 1fr 1fr; }
-    .prize-img-cell:nth-child(1) { grid-row: auto; grid-column: 1/-1; }
-    #hero, #problem, #solution, #hydroponics, #comparison, #income, #prototype, #market, #limitations, #applications, #companion, #future, #commercialize, #iet-thanks, #contact { padding: 5rem 1.5rem; }
-    footer { padding: 2rem 1.5rem; }
-    .iet-people-grid { grid-template-columns: 1fr; }
-  }
   
   /* ── MOBILE NAV MENU ──────────────────────────────── */
 .nav-mobile-menu {
@@ -667,7 +648,15 @@ nav.scrolled { background: rgba(14,31,14,0.96); backdrop-filter: blur(12px); box
   -webkit-overflow-scrolling: touch;
 }
 
-/* ── 900px BREAKPOINT ─────────────────────────────── */
+/* ── TOUCH DEVICES: hide custom cursor ─────────────── */
+
+.future-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 6rem;
+  align-items: start;
+}
+
 @media (max-width: 900px) {
   nav { padding: 1rem 1.5rem; }
   nav.scrolled { padding: 0.8rem 1.5rem; }
@@ -675,7 +664,8 @@ nav.scrolled { background: rgba(14,31,14,0.96); backdrop-filter: blur(12px); box
   .hamburger { display: flex; }
 
   .problem-header, .solution-grid, .income-grid,
-  .companion-grid, .lim-grid, .comm-grid, .proto-header {
+  .companion-grid, .lim-grid, .comm-grid, .proto-header,
+  .future-grid {
     grid-template-columns: 1fr; gap: 2rem;
   }
   .stats-grid, .problem-points, .hydro-grid,
@@ -683,7 +673,8 @@ nav.scrolled { background: rgba(14,31,14,0.96); backdrop-filter: blur(12px); box
   .numbers-inner { grid-template-columns: 1fr 1fr; }
   .hydro-process { grid-template-columns: 1fr 1fr; }
   .proto-gallery-new { grid-template-columns: 1fr 1fr; }
-  .proto-img-cell:nth-child(1) { grid-row: auto; grid-column: 1 / -1; }
+  .proto-gallery-new .proto-img-cell { aspect-ratio: 4/3 !important; min-height: unset !important; }
+  .proto-gallery-new .proto-img-cell:first-child { grid-row: auto; grid-column: 1 / -1; aspect-ratio: 16/9 !important; }
   .build-strip { grid-template-columns: 1fr 1fr; }
   .prize-gallery-new { grid-template-columns: 1fr 1fr; }
   .prize-img-cell:nth-child(1) { grid-row: auto; grid-column: 1 / -1; }
@@ -695,14 +686,11 @@ nav.scrolled { background: rgba(14,31,14,0.96); backdrop-filter: blur(12px); box
   }
   footer { padding: 2rem 1.5rem; }
   .iet-people-grid { grid-template-columns: 1fr; }
-
   .market-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .market-tab { padding: 1rem 1.4rem; white-space: nowrap; }
-
   .footer-right { text-align: left; }
 }
 
-/* ── 600px BREAKPOINT ─────────────────────────────── */
 @media (max-width: 600px) {
   #hero { padding: 6rem 1rem 3rem; }
 
@@ -716,43 +704,20 @@ nav.scrolled { background: rgba(14,31,14,0.96); backdrop-filter: blur(12px); box
   .iet-people-grid { grid-template-columns: 1fr; }
   .build-strip { grid-template-columns: 1fr; }
   .prize-gallery-new { grid-template-columns: 1fr; }
+  .proto-gallery-new { grid-template-columns: 1fr; }
+  .proto-gallery-new .proto-img-cell { aspect-ratio: 4/3 !important; }
+  .proto-gallery-new .proto-img-cell:first-child { aspect-ratio: 3/2 !important; }
 
-  /* Solution badge: pull out of absolute positioning */
-  .solution-badge {
-    position: static;
-    display: inline-block;
-    margin-top: 1.5rem;
-  }
-
-  /* Phone mockup: don't be taller than viewport */
+  .solution-badge { position: static; display: inline-block; margin-top: 1.5rem; }
   .phone-mockup { max-height: 60vh; }
-
-  /* Footer: center everything */
   footer { flex-direction: column; text-align: center; }
   .footer-right { text-align: center; }
-
-  /* Number items: remove right border on last in each row */
   .number-item:nth-child(even) { border-right: none; }
 }
 
-/* ── TOUCH DEVICES: hide custom cursor ─────────────── */
 @media (hover: none) and (pointer: coarse) {
   body { cursor: auto; }
   #cursor, #cursor-ring { display: none; }
-}
-
-.future-grid {
-  display: grid;
-  grid-template-columns: 1fr 1.5fr;
-  gap: 6rem;
-  align-items: start;
-}
-
-@media (max-width: 900px) {
-  .future-grid {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
 }
 
   .solution-img-frame img {
