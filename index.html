@@ -133,10 +133,6 @@ nav.scrolled { background: rgba(14,31,14,0.96); backdrop-filter: blur(12px); box
   .badge-num { font-family: 'Cormorant Garamond', serif; font-size: 2.5rem; font-weight: 300; color: var(--terra); }
   .badge-label { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.7; }
 
-  /* =====================
-     ENHANCED IMAGE SYSTEM
-     ===================== */
-
   /* Solution main image */
   .solution-img-frame {
     position: relative;
@@ -634,15 +630,117 @@ nav.scrolled { background: rgba(14,31,14,0.96); backdrop-filter: blur(12px); box
     footer { padding: 2rem 1.5rem; }
     .iet-people-grid { grid-template-columns: 1fr; }
   }
-  @media (max-width: 600px) {
-    .stats-grid, .problem-points, .hydro-grid, .market-panel.active, .app-grid, .numbers-inner, .comm-grid { grid-template-columns: 1fr; }
-    .proto-crops { grid-template-columns: 1fr; }
-    .hydro-process { grid-template-columns: 1fr; }
-    .process-step { border-right: none; border-bottom: 1px solid var(--cream-dark); }
-    .iet-people-grid { grid-template-columns: 1fr; }
-    .build-strip { grid-template-columns: 1fr; }
-    .prize-gallery-new { grid-template-columns: 1fr; }
+  
+  /* ── MOBILE NAV MENU ──────────────────────────────── */
+.nav-mobile-menu {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(14,31,14,0.97);
+  z-index: 999;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+.nav-mobile-menu.open { display: flex; }
+.nav-mobile-menu a {
+  color: var(--cream);
+  text-decoration: none;
+  font-size: 1.4rem;
+  font-family: 'Cormorant Garamond', serif;
+  letter-spacing: 0.08em;
+}
+.nav-close {
+  position: absolute;
+  top: 1.5rem; right: 1.5rem;
+  font-size: 1.8rem;
+  color: var(--cream);
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+/* ── COMPARISON TABLE ─────────────────────────────── */
+.compare-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── 900px BREAKPOINT ─────────────────────────────── */
+@media (max-width: 900px) {
+  nav { padding: 1rem 1.5rem; }
+  nav.scrolled { padding: 0.8rem 1.5rem; }
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+
+  .problem-header, .solution-grid, .income-grid,
+  .companion-grid, .lim-grid, .comm-grid, .proto-header {
+    grid-template-columns: 1fr; gap: 2rem;
   }
+  .stats-grid, .problem-points, .hydro-grid,
+  .market-panel.active, .app-grid { grid-template-columns: 1fr 1fr; }
+  .numbers-inner { grid-template-columns: 1fr 1fr; }
+  .hydro-process { grid-template-columns: 1fr 1fr; }
+  .proto-gallery-new { grid-template-columns: 1fr 1fr; }
+  .proto-img-cell:nth-child(1) { grid-row: auto; grid-column: 1 / -1; }
+  .build-strip { grid-template-columns: 1fr 1fr; }
+  .prize-gallery-new { grid-template-columns: 1fr 1fr; }
+  .prize-img-cell:nth-child(1) { grid-row: auto; grid-column: 1 / -1; }
+
+  #hero, #problem, #solution, #hydroponics, #comparison,
+  #income, #prototype, #market, #limitations, #applications,
+  #companion, #future, #commercialize, #iet-thanks, #contact {
+    padding: 5rem 1.5rem;
+  }
+  footer { padding: 2rem 1.5rem; }
+  .iet-people-grid { grid-template-columns: 1fr; }
+
+  .market-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .market-tab { padding: 1rem 1.4rem; white-space: nowrap; }
+
+  .footer-right { text-align: left; }
+}
+
+/* ── 600px BREAKPOINT ─────────────────────────────── */
+@media (max-width: 600px) {
+  #hero { padding: 6rem 1rem 3rem; }
+
+  .stats-grid, .problem-points, .hydro-grid,
+  .market-panel.active, .app-grid,
+  .numbers-inner, .comm-grid { grid-template-columns: 1fr; }
+
+  .proto-crops { grid-template-columns: 1fr; gap: 1rem; }
+  .hydro-process { grid-template-columns: 1fr; }
+  .process-step { border-right: none; border-bottom: 1px solid var(--cream-dark); }
+  .iet-people-grid { grid-template-columns: 1fr; }
+  .build-strip { grid-template-columns: 1fr; }
+  .prize-gallery-new { grid-template-columns: 1fr; }
+
+  /* Solution badge: pull out of absolute positioning */
+  .solution-badge {
+    position: static;
+    display: inline-block;
+    margin-top: 1.5rem;
+  }
+
+  /* Phone mockup: don't be taller than viewport */
+  .phone-mockup { max-height: 60vh; }
+
+  /* Footer: center everything */
+  footer { flex-direction: column; text-align: center; }
+  .footer-right { text-align: center; }
+
+  /* Number items: remove right border on last in each row */
+  .number-item:nth-child(even) { border-right: none; }
+}
+
+/* ── TOUCH DEVICES: hide custom cursor ─────────────── */
+@media (hover: none) and (pointer: coarse) {
+  body { cursor: auto; }
+  #cursor, #cursor-ring { display: none; }
+}
+
   .solution-img-frame img {
   width: 100%;
   height: 100%;        /* keeps original aspect ratio */
@@ -672,6 +770,18 @@ nav.scrolled { background: rgba(14,31,14,0.96); backdrop-filter: blur(12px); box
     <span></span><span></span><span></span>
   </div>
 </nav>
+
+<!-- Mobile nav menu markup (add right after <nav>) -->
+<div class="nav-mobile-menu" id="mobileMenu">
+  <button class="nav-close" onclick="closeMobileMenu()">✕</button>
+  <a href="#problem" onclick="closeMobileMenu()">Problem</a>
+  <a href="#solution" onclick="closeMobileMenu()">Solution</a>
+  <a href="#hydroponics" onclick="closeMobileMenu()">Hydroponics</a>
+  <a href="#income" onclick="closeMobileMenu()">Income</a>
+  <a href="#prototype" onclick="closeMobileMenu()">Prototype</a>
+  <a href="#market" onclick="closeMobileMenu()">Market</a>
+  <a href="#contact" onclick="closeMobileMenu()">Contact</a>
+</div>
 
 <!-- HERO -->
 <section id="hero">
@@ -1432,6 +1542,14 @@ nav.scrolled { background: rgba(14,31,14,0.96); backdrop-filter: blur(12px); box
       links.style.top = '100%'; links.style.left = '0'; links.style.right = '0';
       links.style.background = 'rgba(14,31,14,0.98)'; links.style.padding = '1.5rem'; links.style.gap = '1.2rem';
     }
+  }
+
+  // Mobile menu
+  document.querySelector('.hamburger').addEventListener('click', () => {
+    document.getElementById('mobileMenu').classList.add('open');
+  });
+  function closeMobileMenu() {
+    document.getElementById('mobileMenu').classList.remove('open');
   }
 </script>
 </body>
