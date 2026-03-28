@@ -741,6 +741,20 @@ nav.scrolled { background: rgba(14,31,14,0.96); backdrop-filter: blur(12px); box
   #cursor, #cursor-ring { display: none; }
 }
 
+.future-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 6rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .future-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
   .solution-img-frame img {
   width: 100%;
   height: 100%;        /* keeps original aspect ratio */
@@ -1287,7 +1301,7 @@ nav.scrolled { background: rgba(14,31,14,0.96); backdrop-filter: blur(12px); box
 <!-- FUTURE -->
 <section id="future">
   <div class="future-inner">
-    <div style="display:grid;grid-template-columns:1fr 1.5fr;gap:6rem;align-items:start;">
+    <div style="future-grid">
       <div>
         <div class="section-label reveal">11 — Roadmap</div>
         <h2 class="section-title future-title reveal reveal-delay-1">Future<br/><em style="font-style:italic;color:var(--terra)">Improvements</em></h2>
